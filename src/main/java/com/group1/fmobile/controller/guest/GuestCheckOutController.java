@@ -127,12 +127,12 @@ public class GuestCheckOutController {
     @Transactional
     public String createOrder(@Valid @ModelAttribute("orderDTO") OrderDTO orderDTO,
                               HttpSession session, Model model, Principal principal,
-                              @RequestParam(value = "paymentId") Long payment,
+                              @RequestParam(value = "paymentId") Long paymentId,
                               @RequestParam(value = "phone") String phone,
                               @RequestParam(value = "address") String address,
                               @RequestParam(value = "fullName") String fullName) {
         if (principal == null) {
-            return "redirect:/login";  // Redirect to login if not authenticated
+            return "redirect:/login";
         }
 
         String username = principal.getName();
@@ -142,7 +142,7 @@ public class GuestCheckOutController {
             if (isCartEmpty(cartProducts, model)) {
                 return "guest/searchpage/checkout";
             }
-            PaymentMethod paymentMethod = paymentMethodRepository.findById(payment).orElseThrow();
+            PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentId).orElseThrow();
             Double total = calculateTotal(cartProducts);
 
             // Áp dụng giảm giá chỉ cho người dùng đã đăng nhập
@@ -155,7 +155,9 @@ public class GuestCheckOutController {
                 return "guest/searchpage/checkout";
             }
 
+
             Orders order = createOrder(user, paymentMethod, address, total, fullName, phone, user.getEmail());
+
             order.setDiscount(discount);  // Lưu thông tin giảm giá vào đơn hàng
 
             saveOrderDetails(order, cartProducts);

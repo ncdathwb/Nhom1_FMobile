@@ -60,7 +60,7 @@
 <div class="container mt-5">
     <h1 class="mb-4"><i class="fas fa-shopping-bag icon-text"></i>My Orders</h1>
 
-    <c:forEach items="${listOrder}" var="order" begin="0" end="4">
+    <c:forEach items="${listOrder}" var="order">
         <div class="card">
             <div class="card-body">
                 <div class="d-flex justify-content-between align-items-center">
@@ -75,14 +75,10 @@
                         <i class="fas fa-eye"></i> View Details
                     </button>
                     <c:if test="${order.status != 'Canceled'}">
-                        <%--                        <form action="/cancel-order" onsubmit="return confirmCancel()" method="post" class="d-inline">--%>
-                        <%--                         nếu order thì thêm 80 va 84--%>
                         <form action="/client/cancel-order" onsubmit="return confirmCancel()" method="post" class="d-inline">
                             <input type="hidden" name="orderID" value="${order.id}">
                             <button class="btn btn-danger btn-sm"><i class="fas fa-times icon-text"></i>Cancel Order</button>
-
                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-
                         </form>
                     </c:if>
                 </div>

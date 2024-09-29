@@ -32,8 +32,8 @@ public class Orders {
     User user;
 
     //LK Discount
-    @OneToOne
-    @JoinColumn(name = "discount_id", referencedColumnName = "discount_id")
+    @ManyToOne
+    @JoinColumn(name = "discount_id")
     Discount discount;
 
     String phone;

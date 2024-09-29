@@ -25,12 +25,6 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     @Query("SELECT p FROM Product p WHERE p.productCategory.id = 1 ORDER BY p.sold DESC")
     List<Product> findAllMobileByOrderBySoldDesc(Pageable pageable);
 
-    @Query("SELECT DISTINCT p FROM Product p " +
-            "LEFT JOIN p.productCategory c " +
-            "LEFT JOIN p.brand b " +
-            "WHERE LOWER(p.productName) LIKE LOWER(CONCAT('%', :query, '%')) " +
-            "OR LOWER(b.brandName) LIKE LOWER(CONCAT('%', :query, '%'))")
-    Page<Product> findProductsByQuery(@Param("query") String query, Pageable pageable);
 
     // Lấy 4 sản phẩm mới nhất dựa trên product_category_id
     List<Product> findTop4ByProductCategoryIdOrderByCreatedAtDesc(Long productCategoryId);

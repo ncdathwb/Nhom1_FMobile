@@ -30,7 +30,7 @@ public class Discount {
     double minPurchaseAmount;
 
     //LK Order
-    @OneToOne(mappedBy = "discount")
-    Orders orders;
+//    @OneToOne(mappedBy = "discount")
+//    Orders orders;
 
 }

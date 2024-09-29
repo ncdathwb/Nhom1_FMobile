@@ -25,67 +25,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-//@Controller
-//@RequestMapping("/client")
-//public class OrderController {
-//
-//    @Autowired
-//    private OrderRepository orderRepository;
-//
-//    @Autowired
-//    private UserRepository userRepository;
-//
-//    @Autowired
-//    private MailService mailService;
-//
-//    @GetMapping("/order")
-//    public String orderPage(HttpSession session, Model model, @PageableDefault(size = 5) Pageable pageable) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            return "redirect:/login";
-//        }
-//
-//        String username = authentication.getName();
-//        User user = userRepository.findByEmail(username);
-//        // Lấy tất cả đơn hàng của người dùng
-//        Page<Orders> allOrders = orderRepository.findByUserId(user.getId(), pageable);
-//
-//        // Lọc chỉ các đơn hàng có trạng thái "Waiting"
-//        List<Orders> waitingOrders = allOrders.getContent().stream()
-//                .filter(order -> "Waiting".equals(order.getStatus()))
-//                .collect(Collectors.toList());
-//
-//        // Tạo một Page mới từ danh sách đã lọc
-//        Page<Orders> waitingOrdersPage = new PageImpl<>(waitingOrders, pageable, waitingOrders.size());
-//
-//        model.addAttribute("listOrder", waitingOrdersPage.getContent());
-//        model.addAttribute("totalPage", waitingOrdersPage.getTotalPages());
-//        model.addAttribute("currentPage", pageable.getPageNumber());
-//
-//        return "client/order/order";
-//    }
-//
-//    @PostMapping("/cancel-order")
-//    @Transactional
-//    public String cancelOrder(@RequestParam(value = "orderID") Long orderId) {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null || !authentication.isAuthenticated()) {
-//            return "redirect:/login";
-//        }
-//
-//        Orders orders = orderRepository.findById(orderId).orElseThrow(() -> new RuntimeException("Order not found"));
-//        orders.setStatus("Canceled");
-//        orderRepository.save(orders);
-//
-//        mailService.sendMail(orders.getUser().getEmail(),
-//                "Order Cancellation Notice",
-//                "Your order " + orders.getId() + " has been canceled at " + LocalDateTime.now());
-//
-//        return "redirect:/client/order";
-//    }
-//}
-
-
 @Controller
 @RequestMapping("/client")
 public class OrderController {
@@ -115,26 +54,18 @@ public class OrderController {
             return "redirect:/login";
         }
 
-        // Lấy tất cả đơn hàng của người dùng
-        Page<Orders> allOrders = orderRepository.findByUserId(user.getId(), pageable);
+        // Thay đổi này: Lấy trực tiếp các đơn hàng có trạng thái "Waiting"
+        Page<Orders> waitingOrders = orderRepository.findByUserIdAndStatus(user.getId(), "Waiting", pageable);
 
-        // Lọc chỉ các đơn hàng có trạng thái "Waiting"
-        List<Orders> waitingOrders = allOrders.getContent().stream()
-                .filter(order -> "Waiting".equals(order.getStatus()))
-                .collect(Collectors.toList());
-
-        // Tạo một Page mới từ danh sách đã lọc
-        Page<Orders> waitingOrdersPage = new PageImpl<>(waitingOrders, pageable, waitingOrders.size());
-
-        model.addAttribute("listOrder", waitingOrdersPage.getContent());
-        model.addAttribute("totalPage", waitingOrdersPage.getTotalPages());
+        model.addAttribute("listOrder", waitingOrders.getContent());
+        model.addAttribute("totalPage", waitingOrders.getTotalPages());
         model.addAttribute("currentPage", pageable.getPageNumber());
 
         return "client/order/order";
     }
 
     @PostMapping("/cancel-order")
-//    @Transactional
+    @Transactional
     public String cancelOrder(@RequestParam(value = "orderID") Long orderId) {
         // Kiểm tra xác thực
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

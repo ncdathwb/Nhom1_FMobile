@@ -8,6 +8,7 @@ import jakarta.persistence.TypedQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -60,29 +61,44 @@ public class ProductServices {
     }
 
     public Page<Product> searchByQuery(String query, int page, int size) {
+        // Tạo đối tượng Pageable từ page và size
         Pageable pageable = PageRequest.of(page, size);
-        return productRepository.findProductsByQuery(query, pageable);
-    }
 
-    public String determineViewName(Set<String> categories) {
-        if (categories.size() != 1) {
-            return "guest/searchPage/allProduct";
+        // Tách chuỗi query thành các từ khóa
+        String[] keywords = query.toLowerCase().split("\\s+");
+
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < keywords.length; i++) {
+            if (i > 0) {
+                sb.append(" AND ");
+            }
+            sb.append("(")
+                    .append("LOWER(p.productName) LIKE CONCAT('%', :keyword").append(i).append(", '%') ")
+                    .append("OR LOWER(b.brandName) LIKE CONCAT('%', :keyword").append(i).append(", '%') ")
+                    .append("OR LOWER(c.categoryName) LIKE CONCAT('%', :keyword").append(i).append(", '%')")
+                    .append(")");
         }
 
-        String category = categories.iterator().next().toLowerCase();
-        switch (category) {
-            case "mobile":
-                return "guest/searchPage/mobile";
-            case "laptop":
-                return "guest/searchPage/laptop";
-            case "tablet":
-                return "guest/searchPage/tablet";
-            case "accessories":
-                return "guest/searchPage/accessories";
-            default:
-                return "guest/searchPage/allProduct";
+        String finalQuery = "SELECT DISTINCT p FROM Product p " +
+                "LEFT JOIN p.productCategory c " +
+                "LEFT JOIN p.brand b " +
+                "WHERE " + sb.toString();
+
+        TypedQuery<Product> typedQuery = entityManager.createQuery(finalQuery, Product.class);
+        for (int i = 0; i < keywords.length; i++) {
+            typedQuery.setParameter("keyword" + i, keywords[i]);
         }
+
+        // Lấy danh sách sản phẩm từ truy vấn
+        List<Product> productList = typedQuery.getResultList();
+
+        // Phân trang kết quả
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), productList.size());
+
+        return new PageImpl<>(productList.subList(start, end), pageable, productList.size());
     }
+
 
     public List<Product> filterProduct(String brands, String minPriceStr, String maxPriceStr, String rams, int productCategoryId) {
 
