@@ -55,7 +55,7 @@
 </head>
 <body>
 
-<jsp:include page="header.jsp"/>
+<%--<jsp:include page="header.jsp"/>--%>
 
 <div class="container mt-5">
     <h1 class="mb-4"><i class="fas fa-shopping-bag icon-text"></i>My Orders</h1>
@@ -75,9 +75,14 @@
                         <i class="fas fa-eye"></i> View Details
                     </button>
                     <c:if test="${order.status != 'Canceled'}">
-                        <form action="/cancel-order" onsubmit="return confirmCancel()" method="post" class="d-inline">
+                        <%--                        <form action="/cancel-order" onsubmit="return confirmCancel()" method="post" class="d-inline">--%>
+                        <%--                         nếu order thì thêm 80 va 84--%>
+                        <form action="/client/cancel-order" onsubmit="return confirmCancel()" method="post" class="d-inline">
                             <input type="hidden" name="orderID" value="${order.id}">
                             <button class="btn btn-danger btn-sm"><i class="fas fa-times icon-text"></i>Cancel Order</button>
+
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
                         </form>
                     </c:if>
                 </div>
@@ -118,7 +123,7 @@
     </nav>
 </div>
 
-<jsp:include page="footer.jsp"/>
+<%--<jsp:include page="footer.jsp"/>--%>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>

@@ -73,10 +73,14 @@
         <div class="col-9">
             <div class="container">
                 <input id="productCategory" type="hidden" name="productCategory" value="1">
+
                 <div id="filterProductResults" data-total="${totalProducts}">
-                    <!-- Danh sách sản phẩm khi Filter-->
                 </div>
+
                 <div id="searchProductResults">
+                    <div class="row title mb-5">
+                        <h1>Result: ${results} products</h1>
+                    </div>
                     <div class="row">
                         <div class="listProduct">
                             <!-- Nơi hiển thị kết quả sản phẩm khi Search -->

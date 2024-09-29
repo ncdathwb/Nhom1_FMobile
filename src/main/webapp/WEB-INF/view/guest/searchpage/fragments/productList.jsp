@@ -12,7 +12,7 @@
     <c:choose>
         <c:when test="${not empty products}">
             <div class = "row title mb-5">
-                <h2></h2>
+                <h1></h1>
             </div>
             <div class = "row">
                 <div class="listProduct">

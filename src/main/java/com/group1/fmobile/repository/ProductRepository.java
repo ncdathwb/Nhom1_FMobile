@@ -30,7 +30,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
             "LEFT JOIN p.brand b " +
             "WHERE LOWER(p.productName) LIKE LOWER(CONCAT('%', :query, '%')) " +
             "OR LOWER(b.brandName) LIKE LOWER(CONCAT('%', :query, '%'))")
-    List<Product> findProductsByQuery(@Param("query") String query);
+    Page<Product> findProductsByQuery(@Param("query") String query, Pageable pageable);
 
     // Lấy 4 sản phẩm mới nhất dựa trên product_category_id
     List<Product> findTop4ByProductCategoryIdOrderByCreatedAtDesc(Long productCategoryId);

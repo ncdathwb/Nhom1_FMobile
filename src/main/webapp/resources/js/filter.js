@@ -19,7 +19,7 @@ function updateProducts() {
 
     if (isFiltering) {
         wasFiltering = true; // Đánh dấu rằng bộ lọc đã được sử dụng
-        $('#filterProductResults').html('<p>Đang tải...</p>');
+        $('#filterProductResults').html('<h3>Đang tải...</h3>');
         $('#searchProductResults').hide();
         $('#filterProductResults').show();
 
@@ -41,13 +41,13 @@ function updateProducts() {
 
                 let titleText = 'Filter Result:  ' + filterTotalProducts + ' products';
                 document.title = titleText;
-                $('.title h2').text(titleText);
+                $('.title h1').text(titleText);
                 applyPagination();
             },
             error: function(xhr, status, error) {
                 console.error("AJAX Error:", status, error);
                 console.error("Response Text:", xhr.responseText);
-                $('#filterProductResults').html('<p>Có lỗi xảy ra khi tải sản phẩm. Vui lòng thử lại.</p>');
+                $('#filterProductResults').html('<h3>Có lỗi xảy ra khi tải sản phẩm. Vui lòng thử lại.</h3>');
             }
         });
     } else {
@@ -62,7 +62,7 @@ function updateProducts() {
             let totalSearchProducts = $('#searchProductResults .item').length;
             let titleText = totalSearchProducts + ' Products Found';
             document.title = titleText;
-            $('.title h2').text(titleText);
+            $('.title h1').text(titleText);
         }
     }
 }
@@ -87,7 +87,7 @@ function applyPagination() {
     // Cập nhật tiêu đề
     let titleText = 'Filter Result: ' + filterTotalProducts + ' products';
     document.title = titleText;
-    $('.title h2').text(titleText);
+    $('.title h1').text(titleText);
 
     // Tạo các nút phân trang
     createPaginationButtons(totalPages);
@@ -143,3 +143,5 @@ $(document).ready(function() {
     // Không áp dụng phân trang cho kết quả ban đầu
     updateProducts();
 });
+
+

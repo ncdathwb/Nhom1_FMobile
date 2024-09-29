@@ -48,7 +48,7 @@
                 <div class="row">
                     <label>RAM</label>
                     <div class="row ram-container">
-                        <c:forEach items="${['4GB', '6GB', '8GB', '12GB', '16GB']}" var="ram">
+                        <c:forEach items="${['4GB', '6GB', '8GB', '12GB', '16GB', '32GB', '64GB']}" var="ram">
                             <div class="col-3">
                                 <input type="checkbox" class="ram-checkbox" name="ram" value="${ram}" id="ram-${ram}">
                                 <label for="ram-${ram}">${ram}</label>
@@ -66,6 +66,9 @@
                     <!-- Danh sách sản phẩm khi Filter-->
                 </div>
                 <div id="searchProductResults">
+                    <div class="row title mb-5">
+                        <h1>Result: ${results} products</h1>
+                    </div>
                     <div class="row" >
                         <div class="listProduct">
                             <!-- Nơi hiển thị kết quả sản phẩm khi Search -->

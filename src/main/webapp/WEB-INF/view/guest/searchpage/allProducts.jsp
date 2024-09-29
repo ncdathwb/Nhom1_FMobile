@@ -12,8 +12,8 @@
 
 <div class="container">
     <header>
-        <div class = "title">
-            <h1>Result: ${products.size()} products</h1>
+        <div class="title">
+            <h1>Result: ${results} products</h1>
         </div>
     </header>
     <div class="product listAllProduct">
@@ -54,6 +54,27 @@
             </c:if>
         </c:forEach>
     </div>
+    <div class="row">
+        <div class="hpagination">
+            <a href="?query=${param.query}&page=${currentPage - 1}"
+               class="prev ${currentPage == 0 ? 'disabled' : ''}">Previous</a>
+
+            <c:forEach begin="0" end="${totalPages - 1}" var="i">
+                <c:choose>
+                    <c:when test="${i == currentPage}">
+                        <strong>${i + 1}</strong>
+                    </c:when>
+                    <c:otherwise>
+                        <a href="?query=${param.query}&page=${i}">${i + 1}</a>
+                    </c:otherwise>
+                </c:choose>
+            </c:forEach>
+
+            <a href="?query=${param.query}&page=${currentPage + 1}"
+               class="next ${currentPage >= totalPages - 1 ? 'disabled' : ''}">Next</a>
+        </div>
+    </div>
+
 </div>
 
 

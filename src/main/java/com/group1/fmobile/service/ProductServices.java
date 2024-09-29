@@ -45,10 +45,6 @@ public class ProductServices {
         return productRepository.findAllTabletByOrderByPriceDesc(pageable);
     }
 
-    public List<Product> searchByQuery(String query) {
-        return productRepository.findProductsByQuery(query);
-    }
-
     public Map<String, Integer> countProductsByCategory(List<Product> products) {
         Map<String, Integer> categoryCounts = new HashMap<>();
         for (Product product : products) {
@@ -61,6 +57,11 @@ public class ProductServices {
     public Page<Product> findByCategory(String categoryName, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         return productRepository.findByCategoryName(categoryName, pageable);
+    }
+
+    public Page<Product> searchByQuery(String query, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return productRepository.findProductsByQuery(query, pageable);
     }
 
     public String determineViewName(Set<String> categories) {

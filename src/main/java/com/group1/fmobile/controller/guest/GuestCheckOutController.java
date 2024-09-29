@@ -6,6 +6,7 @@ import com.group1.fmobile.repository.*;
 import com.group1.fmobile.service.PaymentMethodService;
 import com.group1.fmobile.service.ProductServices;
 import com.group1.fmobile.service.account.MailService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
@@ -90,12 +91,13 @@ public class GuestCheckOutController {
 
         setModelAttributes(model, cartProducts, totalAmount, principal);
         return "guest/searchpage/checkout";
+
     }
 
     @PostMapping("/checkout-not-login")
     @Transactional
     public String createOrderNotLogin(HttpSession session, Model model,
-                                      @RequestParam(value = "payment") Long payment,
+                                      @RequestParam(value = "paymentId") Long paymentId,
                                       @RequestParam(value = "phone") String phone,
                                       @RequestParam(value = "address") String address,
                                       @RequestParam(value = "fullName") String fullName,
@@ -105,7 +107,7 @@ public class GuestCheckOutController {
             return "guest/searchpage/checkout";
         }
 
-        PaymentMethod paymentMethod = paymentMethodRepository.findById(payment).orElseThrow();
+        PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentId).orElseThrow();
         Double total = calculateTotal(cartProducts);
 
         if (!updateProductQuantities(cartProducts, model)) {
@@ -118,14 +120,14 @@ public class GuestCheckOutController {
 
         clearCart(session);
         logger.info("After clearCart - Session attributes: {}", safeToString(Collections.list(session.getAttributeNames())));
-        return "redirect:/?orderSuccess=true";
+        return "redirect:/";
     }
 
     @PostMapping
     @Transactional
     public String createOrder(@Valid @ModelAttribute("orderDTO") OrderDTO orderDTO,
                               HttpSession session, Model model, Principal principal,
-                              @RequestParam(value = "payment") Long payment,
+                              @RequestParam(value = "paymentId") Long payment,
                               @RequestParam(value = "phone") String phone,
                               @RequestParam(value = "address") String address,
                               @RequestParam(value = "fullName") String fullName) {
@@ -164,7 +166,12 @@ public class GuestCheckOutController {
 
             clearCart(session);
             logger.info("After clearCart - Session attributes: {}", safeToString(Collections.list(session.getAttributeNames())));
-            return "redirect:/?orderSuccess=true";
+//            return "redirect:/?orderSuccess=true";
+
+            // thêm nếu có order
+            return "redirect:/client/order";
+
+//            --------
         } catch (Exception e) {
             logger.error("Error in createOrder: ", e);
             setMessage(model, session, "An error occurred while processing your order. Please try again.", "orderError");
@@ -247,17 +254,18 @@ public class GuestCheckOutController {
         return orderRepository.save(order);
     }
 
+
     private void saveOrderDetails(Orders order, Map<Product, Long> cartProducts) {
         for (Map.Entry<Product, Long> entry : cartProducts.entrySet()) {
+            Product product = productRepository.findById(entry.getKey().getId()).orElseThrow(() -> new EntityNotFoundException("Product not found"));
             OrdersDetail ordersDetail = new OrdersDetail();
             ordersDetail.setOrders(order);
-            ordersDetail.setPrice(entry.getKey().getPrice());
-            ordersDetail.setProduct(entry.getKey());
+            ordersDetail.setPrice(product.getPrice());
+            ordersDetail.setProduct(product);
             ordersDetail.setQuantity(entry.getValue().intValue());
             orderDetailRepository.save(ordersDetail);
         }
     }
-
     private void sendConfirmationEmail(Orders order, String email) {
         String emailContent = String.format(
                 "Thank you for your order: [ %s ].\n\nOrder Details\nOrder ID: %s\nShipping Address: %s\nPhone: %s\n",
