@@ -16,7 +16,6 @@ import java.util.List;
 @RequestMapping("client/homepage/purchase-history")
 public class PurchaseController {
     private final PurchaseHistoryService purchaseHistoryService;
-
     @Autowired
     public PurchaseController(PurchaseHistoryService purchaseHistoryService) {
         this.purchaseHistoryService = purchaseHistoryService;
