@@ -74,26 +74,6 @@ public class ProductController {
         return "client/homepage/productsDetail";
     }
 
-//    @GetMapping("/checkout")
-//    public String checkout(@RequestParam Long productId, Model model) {
-//        List<Product> products = new ArrayList<>();
-//
-//        // Lấy thông tin sản phẩm theo Id;
-//        Product product = productService.getProductById(productId);
-//        Product productBuy = new Product();
-//        productBuy.setId(product.getId());
-//        productBuy.setProductName(product.getProductName());
-//        productBuy.setPrice(product.getPrice());
-//        productBuy.setQuantity(1);
-//        products.add(productBuy);
-//        if (productBuy != null) {
-//            model.addAttribute("products", products);
-//            return "client/searchPage/checkout";
-//        } else {
-//            return "redirect:/client/homepage/index";
-//        }
-//    }
-
     @GetMapping("/checkout")
     public String checkout(@RequestParam Long productId, Model model, Principal principal) {
         List<Product> products = new ArrayList<>();

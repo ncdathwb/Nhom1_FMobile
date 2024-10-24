@@ -11,5 +11,7 @@ public class FaviconController {
     @ResponseBody
     void returnNoFavicon() {
         // Không trả về nội dung
+
+
     }
 }
